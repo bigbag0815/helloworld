@@ -70,7 +70,7 @@ public class PatController {
 		      /**
 		       * 这个地方到时候修改成linux系统上的一个位置
 		       * */
-				String uploadedFileLocation = "D:/bullshit/" + detail.getFileName();
+				String uploadedFileLocation = "/home/bullshitpic/" + detail.getFileName();
 				if (StringUtils.isNotEmpty(detail.getFileName())) {
 					 System.out.println("File Name："+detail.getFileName());
 					 System.out.println("File Type："+detail.getType());

@@ -10,8 +10,6 @@
 		Select a file : <input type="file" name="file" size="45" /><br>
 		Select a file : <input type="file" name="file" size="45" /><br>
 		Select a file : <input type="file" name="file" size="45" /><br>
-		Select a file : <input type="file" name="file" size="45" /><br>
-		Select a file : <input type="file" name="file" size="45" /><br>
 	   </p>
 	   <input type="submit" value="Upload It" />
 	</form>
