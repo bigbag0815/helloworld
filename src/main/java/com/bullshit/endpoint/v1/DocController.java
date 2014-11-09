@@ -17,11 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import com.bullshit.endpoint.entity.Cases;
+import com.bullshit.endpoint.entity.DocSurgeryPlan;
 import com.bullshit.endpoint.entity.ErrInfo;
-import com.bullshit.endpoint.entity.vo.PatCaseVo;
+import com.bullshit.endpoint.entity.vo.DocSurgeryPlanVo;
 import com.bullshit.endpoint.exception.ApiException;
-import com.bullshit.endpoint.service.PatBusinessLogic;
+import com.bullshit.endpoint.service.DocBusinessLogic;
 import com.bullshit.endpoint.utils.DateUtil;
 import com.bullshit.endpoint.utils.FileUtil;
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -30,44 +30,44 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.FormDataParam;
 
 @Component
-@Path("/v1/pat")
-public class PatController {
-	Logger log = LoggerFactory.getLogger(PatController.class);
-	
+@Path("/v1/doc")
+public class DocController {
+	Logger log = LoggerFactory.getLogger(DocController.class);
+
 	@Autowired
-	PatBusinessLogic patLogic;
+	DocBusinessLogic docLogic;
 	
-	/* 病人填写病例 */
+	/* 医生上传手术日程表 */
 	@POST
-	@Path("/cases/uploads")
+	@Path("/plan/uploads")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public PatCaseVo loadFiles (
-		    @FormDataParam("pat_id") String userId,
+	public DocSurgeryPlanVo loadFiles (
+		    @FormDataParam("doc_id") String userId,
 		    @FormDataParam("description") String description,
 			FormDataMultiPart form)  throws ApiException{
 		
-		PatCaseVo patCaseVo = new PatCaseVo();
-		
+		DocSurgeryPlanVo docSurgeryPlanVo = new DocSurgeryPlanVo();
+
 		if (StringUtils.isEmpty(userId)) {
 			/** "user_id is required";*/
-			patCaseVo.setRsStatus("ng");
-			patCaseVo.setErrInfo(new ErrInfo("101", "请输入用户名。"));
-			return patCaseVo;
+			docSurgeryPlanVo.setRsStatus("ng");
+			docSurgeryPlanVo.setErrInfo(new ErrInfo("101", "请输入用户名。"));
+			return docSurgeryPlanVo;
 		}
 		if (StringUtils.isEmpty(description)) {
 			/* "description is required";*/
-			patCaseVo.setRsStatus("ng");
-			patCaseVo.setErrInfo(new ErrInfo("102", "请输入说明信息。"));
-			return patCaseVo;
+			docSurgeryPlanVo.setRsStatus("ng");
+			docSurgeryPlanVo.setErrInfo(new ErrInfo("102", "请输入说明信息。"));
+			return docSurgeryPlanVo;
 		}
 		
 		List<FormDataBodyPart> fileList = form.getFields("file");
-		if ((!CollectionUtils.isEmpty(fileList)) && fileList.size() > 3) {
-			patCaseVo.setRsStatus("ng");
-			patCaseVo.setErrInfo(new ErrInfo("103", "请最多入力三张图片。"));
+		if ((!CollectionUtils.isEmpty(fileList)) && fileList.size() > 1) {
+			docSurgeryPlanVo.setRsStatus("ng");
+			docSurgeryPlanVo.setErrInfo(new ErrInfo("103", "请最多入力一张图片。"));
 		}
-		
+
 		try {
 			List<String> locationlist = new ArrayList<String>();
 			String currentTime = String.valueOf(System.currentTimeMillis());
@@ -79,7 +79,7 @@ public class PatController {
 			    FormDataContentDisposition detail = part.getFormDataContentDisposition();
 			    /** Media type * */
 			    // MediaType type = part.getMediaType();
-			    
+			      
 			    if (StringUtils.isNotEmpty(detail.getFileName())) {
 				    /**
 				     * 这个地方到时候修改成linux系统上的一个位置
@@ -96,55 +96,27 @@ public class PatController {
 				}
 			}
 	
-			Cases patCase = new Cases();
-			patCase.setPatId(userId);
-			patCase.setPatReport(description);
+			DocSurgeryPlan docSurgeryPlan = new DocSurgeryPlan();
+			docSurgeryPlan.setPlanId(userId + System.currentTimeMillis());
+			docSurgeryPlan.setDocId(userId);
 			if (locationlist.size() > 0 && StringUtils.isNotEmpty(locationlist.get(0))) {
-				patCase.setPatPicUrl1(locationlist.get(0));
+				docSurgeryPlan.setSurgeryPlanPicUrl(locationlist.get(0));
 			}
-			if (locationlist.size() > 1 &&  StringUtils.isNotEmpty(locationlist.get(1))) {
-				patCase.setPatPicUrl2(locationlist.get(1));
-			}
-			if (locationlist.size() > 2 && StringUtils.isNotEmpty(locationlist.get(2))) {
-				patCase.setPatPicUrl3(locationlist.get(2));
-			}
-			patCase.setCaseId(userId + System.currentTimeMillis());
-			patCase.setCtime(DateUtil.getCurrentDate());
-			patCase.setMtime(DateUtil.getCurrentDate());
-			patLogic.savePatCase(patCase);
+			docSurgeryPlan.setDescription(description);
+			docSurgeryPlan.setCtime(DateUtil.getCurrentDate());
+			docSurgeryPlan.setMtime(DateUtil.getCurrentDate());
 			
-			patCaseVo.setRsStatus("ok");
-			patCaseVo.setPatCase(patCase);
+			docLogic.saveSurgeryPlan(docSurgeryPlan);
+			
+			docSurgeryPlanVo.setRsStatus("ok");
+			docSurgeryPlanVo.setDocSurgeryPlan(docSurgeryPlan);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.debug(e.toString());
-			patCaseVo.setRsStatus("ng");
-			patCaseVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+			docSurgeryPlanVo.setRsStatus("ng");
+			docSurgeryPlanVo.setErrInfo(new ErrInfo("500", e.getMessage()));
 		}
 		
-		return patCaseVo;
+		return docSurgeryPlanVo;
 	}
-	
-	/* 病人填写病例 */
-	@POST
-	@Path("/cases/upload")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
-	public String loadFile (
-		@FormDataParam("user_id") String user_id,
-		@FormDataParam("description") String description,
-		@FormDataParam("file") InputStream uploadedInputStream,
-		@FormDataParam("file") FormDataContentDisposition fileDetail)  throws Exception{
-		
-		System.out.println("user_id："+user_id);
-		System.out.println("description："+description);
-		
-		String uploadedFileLocation = "D:/bullshit/" + fileDetail.getFileName();
-		// save it
-		FileUtil.saveFile(uploadedInputStream, uploadedFileLocation);
-		
-		String output = "File uploaded to : " + uploadedFileLocation;
-		return uploadedFileLocation;
-	}
-
 }
