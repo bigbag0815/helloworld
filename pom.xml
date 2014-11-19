@@ -158,6 +158,14 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>sdk</artifactId>
+			<version>[6.1.7, 6.999]</version>
+		</dependency>
+		
+		
 	</dependencies>
 	<build>
 		<finalName>bullshit_insert_picture</finalName>
