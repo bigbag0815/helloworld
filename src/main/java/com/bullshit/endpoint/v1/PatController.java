@@ -125,26 +125,26 @@ public class PatController {
 		return patCaseVo;
 	}
 	
-	/* 病人填写病例 */
-	@POST
-	@Path("/cases/upload")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
-	public String loadFile (
-		@FormDataParam("user_id") String user_id,
-		@FormDataParam("description") String description,
-		@FormDataParam("file") InputStream uploadedInputStream,
-		@FormDataParam("file") FormDataContentDisposition fileDetail)  throws Exception{
-		
-		System.out.println("user_id："+user_id);
-		System.out.println("description："+description);
-		
-		String uploadedFileLocation = "D:/bullshit/" + fileDetail.getFileName();
-		// save it
-		FileUtil.saveFile(uploadedInputStream, uploadedFileLocation);
-		
-		String output = "File uploaded to : " + uploadedFileLocation;
-		return uploadedFileLocation;
-	}
+//	/* 病人填写病例 */
+//	@POST
+//	@Path("/cases/upload")
+//	@Consumes(MediaType.MULTIPART_FORM_DATA)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public String loadFile (
+//		@FormDataParam("user_id") String user_id,
+//		@FormDataParam("description") String description,
+//		@FormDataParam("file") InputStream uploadedInputStream,
+//		@FormDataParam("file") FormDataContentDisposition fileDetail)  throws Exception{
+//		
+//		System.out.println("user_id："+user_id);
+//		System.out.println("description："+description);
+//		
+//		String uploadedFileLocation = "D:/bullshit/" + fileDetail.getFileName();
+//		// save it
+//		FileUtil.saveFile(uploadedInputStream, uploadedFileLocation);
+//		
+//		String output = "File uploaded to : " + uploadedFileLocation;
+//		return uploadedFileLocation;
+//	}
 
 }
