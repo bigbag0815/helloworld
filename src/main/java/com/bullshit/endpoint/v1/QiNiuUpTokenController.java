@@ -2,6 +2,7 @@ package com.bullshit.endpoint.v1;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -29,6 +30,26 @@ public class QiNiuUpTokenController {
 		
 		try {
 			qiNiuTokenVo.setToken(QiNiuUptoken.getUptoken());
+			qiNiuTokenVo.setRsStatus("ok");
+		} catch (Exception e) {
+			e.printStackTrace();
+			qiNiuTokenVo.setRsStatus("ng");
+			qiNiuTokenVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+		}
+		
+		return qiNiuTokenVo;
+	}
+	
+	/* 获得七牛与存储Token*/
+	@GET
+	@Path("/getuptokenByKey/{key}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public QiNiuTokenVo getUpTokenByKey (@PathParam("key") String key)  throws ApiException{
+		
+		QiNiuTokenVo qiNiuTokenVo = new QiNiuTokenVo();
+		
+		try {
+			qiNiuTokenVo.setToken(QiNiuUptoken.getUptokenByKey(key));
 			qiNiuTokenVo.setRsStatus("ok");
 		} catch (Exception e) {
 			e.printStackTrace();

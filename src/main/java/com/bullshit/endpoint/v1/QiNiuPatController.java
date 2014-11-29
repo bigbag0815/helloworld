@@ -11,12 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.bullshit.endpoint.constants.Constants;
 import com.bullshit.endpoint.entity.Cases;
 import com.bullshit.endpoint.entity.ErrInfo;
 import com.bullshit.endpoint.entity.vo.PatCaseVo;
 import com.bullshit.endpoint.entity.vo.QiNiuPatCaseReq;
 import com.bullshit.endpoint.service.PatBusinessLogic;
 import com.bullshit.endpoint.utils.DateUtil;
+import com.bullshit.endpoint.utils.StringUtil;
 
 @Component
 @Path("/v1/qiniu/pat")
@@ -63,6 +65,10 @@ public class QiNiuPatController {
 			patCase.setCtime(DateUtil.getCurrentDate());
 			patCase.setMtime(DateUtil.getCurrentDate());
 			patLogic.savePatCase(patCase);
+			
+			patCase.setPatPicUrl1(StringUtil.urlPathEdit(patCase.getPatPicUrl1(), Constants.QINIU_PREFIX_URL));
+			patCase.setPatPicUrl2(StringUtil.urlPathEdit(patCase.getPatPicUrl2(), Constants.QINIU_PREFIX_URL));
+			patCase.setPatPicUrl3(StringUtil.urlPathEdit(patCase.getPatPicUrl3(), Constants.QINIU_PREFIX_URL));
 			
 			patCaseVo.setRsStatus("ok");
 			patCaseVo.setPatCase(patCase);
